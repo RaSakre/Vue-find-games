@@ -4,15 +4,38 @@
         <ul v-else class="games-list">
             <Game v-for="game in store.games" :key="game.id" :game="game" />
         </ul>
+        <div class="pagination-controls">
+           <button v-if="prevPage2 >= 0" @submit.prevent="handleSubmit(prevPage2)>{{ prevPage2 }}</button>
+            <button v-if="prevPage1 >= 0">{{ prevPage1 }}</button>
+            <button v-if="currentPage >= 0">{{ currentPage }}</button>
+            <button v-if="nextPage1 < store.allPagesCount">{{ nextPage1 }}</button>
+            <button v-if="nextPage2 < store.allPagesCount">{{ nextPage2 }}</button>
+            <button v-if="store.currentPage !== store.allPagesCount">{{ store.allPagesCount }}</button>
+        </div>
     </div>
 </template>
 <script setup>
+import { computed } from 'vue';
 import { useGamesStore } from '../store/store';
 import Game from './Game.vue';
 const store = useGamesStore();
+const prevPage2 = computed(() => store.currentPage - 2);
+const prevPage1 = computed(() => store.currentPage - 1);
+const currentPage = computed(() => store.currentPage);
+const nextPage1 = computed(() => store.currentPage + 1);
+const nextPage2 = computed(() => store.currentPage + 2);
 
+const handleSubmit = (page) => {
+    store.getGame(input)
+}
 </script>
 <style scoped>
+.pagination-controls{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
 .games-container {
     padding: 30px 15px;
     width: 98%;
