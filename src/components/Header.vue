@@ -26,6 +26,8 @@ import logo from '../assets/logo.svg'
 const input = ref('')
 const store = useGamesStore()
 const handleSubmit = (input) => {
+    store.query = input
+    store.clear()
     store.getGame(input)
 }
 
