@@ -6,13 +6,18 @@
                     <img :src="logo" alt="logo">
                 </router-link>
                 <form @submit.prevent="handleSubmit(input)" action="" class="header__form">
-                    <input v-model="input" type="text" placeholder="Type your game" class="header__input">
+                    <input v-model="input" type="text" placeholder="Type your game in English" class="header__input">
                     <button type="submit" class="header__button button">Find</button>
                 </form>
-                <div class="auth-buttons">
+                <div v-if="!usersStore.isAuthenticated" class="auth-buttons">
                     <router-link to="/login" class="button">Login</router-link>
                     <router-link to="/register" class="button">Join</router-link>
                 </div>
+                <div v-else class="auth-buttons">
+                    <button @click="moveToProfile" class="button">Profile</button>
+                    <button @click="logout" class="button">Log out</button>
+                </div>
+
             </div>
         </div>
     </header>
@@ -21,14 +26,29 @@
 <script setup>
 
 import { useGamesStore } from '../store/store';
+import { useUsersStore } from '../store/usersStore';
 import { ref } from 'vue';
 import logo from '../assets/logo.svg'
+import { useRouter } from 'vue-router';
+
+
+const router = useRouter();
 const input = ref('')
 const store = useGamesStore()
+const usersStore = useUsersStore()
 const handleSubmit = (input) => {
     store.query = input
     store.clear()
     store.getGame(input)
+}
+
+const moveToProfile = () => {
+    router.push('/profile')
+}
+
+const logout = () => {
+    usersStore.logout()
+    router.push('/')
 }
 
 </script>

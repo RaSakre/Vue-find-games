@@ -4,7 +4,7 @@ import Header from './components/Header.vue';
 
 <template>
   <Header />
-  <router-view /> <!-- Здесь будут отображаться страницы -->
+  <router-view /> 
 </template>
 
 <style scoped>

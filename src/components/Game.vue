@@ -2,45 +2,56 @@
     <li :style="{
         backgroundImage: `linear-gradient(rgb(31, 31, 31), rgba(31, 31, 31, 0.85)), url(${game.background_image})`
     }" class="game-card">
-    <a class="game-link" :href=url >
-        <div class="game-content">
-            <div class="image-block">
-                <img class="game-image" :src=game.background_image :alt=game.name>
-            </div>
-            <div class="game-info">
-                <h3>{{ game.name }}</h3>
-                <p>Дата выхода: {{ game.released }} </p>
-                <div class="genresplatforms">
-                    <p>Жанры: {{ game.genres.map(genre => genre.name).join(', ') }}</p>
-                    <p>Платформы: {{ getGamePlatformes(game.platforms) }} </p>
+        <a class="game-link" :href=gameLink>
+            <div class="game-content">
+                <div class="image-block">
+                    <img class="game-image" :src=game.background_image :alt=game.name>
+                </div>
+                <div class="game-info">
+                    <h3>{{ game.name }}</h3>
+                    <p>Дата выхода: {{ game.released }} </p>
+                    <div class="genresplatforms">
+                        <p>Жанры: {{game.genres.map(genre => genre.name).join(', ')}}</p>
+                        <p>Платформы: {{ getGamePlatformesBy3(game.platforms) }} </p>
+                    </div>
                 </div>
             </div>
-        </div>
         </a>
+        <button v-if="isAuth" @click="$emit('toggleFavourite', game.id)" class="favourite">
+            <img :src="favoriteGamesStore.isFavorite(game.id) ? check : heart" alt="">
+        </button>
     </li>
 </template>
 
 <script setup>
+import heart from '../assets/heart.svg'
+import check from '../assets/checkmark.svg'
+import { useFavoriteGamesStore } from '../store/favoriteGamesStore';
+const favoriteGamesStore = useFavoriteGamesStore()
 
+const emits = defineEmits(['toggleFavourite'])
 import { defineProps } from 'vue';
 const props = defineProps({
     game: {
         type: Object,
         required: true
+    },
+    getGamePlatformesBy3: {
+        type: Function,
+        required: true
+    },
+    isAuth: {
+        type: Boolean,
+        required: false
     }
 })
-const url = `https://rawg.io/games/${props.game.slug}`
-const getGamePlatformes = (platformes) => {
-    if (platformes.length > 3) {
-        return platformes.slice(0, 3).map(platform => platform.platform.name).join(', ') + ` and ${platformes.length - 3} more`
-    } else {
-        return platformes.map(platform => platform.platform.name).join(', ')
-    }
-}
+const gameLink = `https://rawg.io/games/${props.game.slug}`
+
 </script>
 
 <style scoped>
 .game-card {
+    position: relative;
     background-position: 50%;
     background-repeat: no-repeat;
     background-size: cover;
@@ -66,6 +77,19 @@ const getGamePlatformes = (platformes) => {
     backdrop-filter: blur(7px);
     padding: 10px 15px;
 }
+
+.favourite {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 10px;
+    padding: 5px;
+    background-color: #bd9f9f;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+
 
 .image-block {
     cursor: pointer;
