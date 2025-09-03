@@ -15,6 +15,7 @@
 import Game from './Game.vue';
 import { useFavoriteGamesStore } from '../store/favoriteGamesStore';
 import { useGamesStore } from '../store/store';
+import { computed } from 'vue';
 const favoriteGamesStore = useFavoriteGamesStore()
 const store = useGamesStore()
 const userName = localStorage.getItem('userName')
@@ -24,13 +25,17 @@ const toggleFavourite = (id) => {
     favoriteGamesStore.toggleFavorite(game)
 }
 
-const getGamePlatformesBy3 = (platformes) => {
+const getGamePlatformesBy3 = computed(() => (platformes) => {
+    if (!platformes) {
+        return ''
+    }
     if (platformes.length > 3) {
         return platformes.slice(0, 3).map(platform => platform.platform.name).join(', ') + ` and ${platformes.length - 3} more`
-    } else {
+    }
+    else {
         return platformes.map(platform => platform.platform.name).join(', ')
     }
-}
+})
 </script>
 <style scoped>
 .greetings {

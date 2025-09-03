@@ -159,7 +159,7 @@ body.dark .header__input {
 }
 
 .checkbox-green input[type="checkbox"]:checked+.checkbox-green-switch {
-    background-color: #f37d7d;
+    background-color: rgb(185 106 106);;
 }
 
 .checkbox-green input[type="checkbox"]:checked+.checkbox-green-switch:before {

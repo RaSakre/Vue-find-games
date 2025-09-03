@@ -35,7 +35,6 @@ const selectedPlatform = ref('Default');
 const toggleFavourite = (id) => {
     const game = store.games.find(game => game.id === id);
     favoriteGamesStore.toggleFavorite(game)
-    console.log(favoriteGamesStore.favoriteGames)
 }
 
 const arrowNextPage = () => {
@@ -59,7 +58,8 @@ const watchChangingPlatform = () => {
 }
 
 
-const getGamePlatformesBy3 = (platformes) => {
+
+const getGamePlatformesBy3 = computed(() => (platformes) => {
     if (!platformes) {
         return ''
     }
@@ -69,18 +69,19 @@ const getGamePlatformesBy3 = (platformes) => {
     else {
         return platformes.map(platform => platform.platform.name).join(', ')
     }
-}
+})
 
 const handleSubmit = (page) => {
     store.getGameByPage(page);
 }
 
-const getPageItemClass = (page) => {
+
+const getPageItemClass = computed(() => (page) => {
     return {
         'page-item': true,
         'active': page === store.currentPage
     };
-}
+})
 
 </script>
 
