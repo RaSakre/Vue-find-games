@@ -7,7 +7,8 @@ export const useGamesStore = defineStore("games", () => {
     const error = ref("");
     const query = ref('');
     const platforms = ref([])
-
+    const isNextNull = ref(false)
+    const isPreviousNull = ref(false)
     const currentPage = ref(1);
     const allPagesCount = ref(0);
 
@@ -21,7 +22,6 @@ export const useGamesStore = defineStore("games", () => {
         const itemsOnPage = 20;
         try {
             const response = await fetch(
-                // @ts-ignore
                 `https://api.rawg.io/api/games?key=785f5a66e21f48a59ed6501ba3d2c48a&search=${query}&page=${currentPage.value}`
             );
             if (!response.ok) {
@@ -29,7 +29,17 @@ export const useGamesStore = defineStore("games", () => {
             }
             const data = await response.json();
             games.value = data.results;
-
+            if (data.next === null) {
+                isNextNull.value = true;
+            } else {
+                isNextNull.value = false;
+            }
+            if (data.previous === null) {
+                isPreviousNull.value = true;
+            } else {
+                isPreviousNull.value = false;
+            }
+            console.log(data)
             allPagesCount.value = Math.ceil(data.count / itemsOnPage);
         } catch (err) {
             error.value = err.message;
@@ -46,7 +56,7 @@ export const useGamesStore = defineStore("games", () => {
                 throw new Error("Error fetching data");
             }
             const data = await response.json();
-            platforms.value = data.results.slice(0,29);
+            platforms.value = data.results.slice(0, 29);
         }
         catch (err) {
             error.value = err.message;
@@ -59,13 +69,13 @@ export const useGamesStore = defineStore("games", () => {
     };
 
 
-const filterGamesByPlatform = (selectedPlatform) => {
+    const filterGamesByPlatform = (selectedPlatform) => {
         if (selectedPlatform === 'Default' || !selectedPlatform) {
             return games.value
         }
-        
+
         return games.value.filter((game) => {
-            return game.platforms.some((platformObj) => 
+            return game.platforms.some((platformObj) =>
                 platformObj.platform.name.toLowerCase() === selectedPlatform.toLowerCase()
             );
         });
@@ -84,5 +94,7 @@ const filterGamesByPlatform = (selectedPlatform) => {
         getPlatforms,
         platforms,
         filterGamesByPlatform,
+        isNextNull,
+        isPreviousNull,
     };
 });

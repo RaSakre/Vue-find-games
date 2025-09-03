@@ -1,6 +1,6 @@
 <template>
     <li :style="{
-        backgroundImage: `linear-gradient(rgb(31, 31, 31), rgba(31, 31, 31, 0.85)), url(${game.background_image})`
+        '--bg-image': `url(${game.background_image})`
     }" class="game-card">
         <a class="game-link" :href=gameLink>
             <div class="game-content">
@@ -11,7 +11,7 @@
                     <h3>{{ game.name }}</h3>
                     <p>Дата выхода: {{ game.released }} </p>
                     <div class="genresplatforms">
-                        <p>Жанры: {{game.genres.map(genre => genre.name).join(', ')}}</p>
+                        <p>Жанры: {{game.genres.length ? game.genres.map(genre => genre.name).join(', ') : 'Нет данных'}}</p>
                         <p>Платформы: {{ getGamePlatformesBy3(game.platforms) }} </p>
                     </div>
                 </div>
@@ -57,8 +57,14 @@ const gameLink = `https://rawg.io/games/${props.game.slug}`
     background-size: cover;
     border: 1px solid #1b1b1b;
     border-radius: 4px;
-    background-color: #333333;
+    background-image: linear-gradient(rgb(119, 98, 98),
+            rgba(31, 31, 31, 0.85)), var(--bg-image);
     transition: transform 0.3s ease-in-out;
+}
+
+body.light .game-card {
+    background-image: linear-gradient(rgb(31, 31, 31),
+            rgba(31, 31, 31, 0.85)), var(--bg-image);
 }
 
 .game-card:hover {
@@ -73,7 +79,7 @@ const gameLink = `https://rawg.io/games/${props.game.slug}`
 .game-content {
     display: flex;
     gap: 20px;
-    height: 100%;
+    height: 101%;
     backdrop-filter: blur(7px);
     padding: 10px 15px;
 }

@@ -3,18 +3,25 @@
         <select @change="props.watchChangingPlatform" v-model="selectedPlatform" v-if="props.store.games.length > 0"
             class="form-select form-select-lg" aria-label="Default select example">
             <option value="Default" selected>Choose platform</option>
-            <option v-for="platform in props.store.platforms" :key="platform.id" :value="platform.name">{{ platform.name }}
+            <option v-for="platform in props.store.platforms" :key="platform.id" :value="platform.name">{{ platform.name
+                }}
             </option>
         </select>
         <div v-if="props.store.isLoading" class="loader"></div>
         <ul v-else class="games-list">
-            <Game v-for="game in props.store.games" :key="game.id" :game="game" :getGamePlatformesBy3="getGamePlatformesBy3"
-                @toggleFavourite="toggleFavourite" :isAuth="isAuth" />
+            <Game v-for="game in props.store.games" :key="game.id" :game="game"
+                :getGamePlatformesBy3="getGamePlatformesBy3" @toggleFavourite="toggleFavourite" :isAuth="isAuth" />
         </ul>
         <div v-if="props.store.games.length > 0" class="pagination-controls">
             <nav aria-label="Page navigation example">
                 <ul class="pagination">
-                    <li v-if="props.store.currentPage >= 5" @click="handleSubmit(page1)" :class="getPageItemClass(page1)">
+                    <li class="page-item">
+                        <a @click="arrowPrevPage" class="page-link" href="#" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li v-if="props.store.currentPage >= 5" @click="handleSubmit(page1)"
+                        :class="getPageItemClass(page1)">
                         <a class="page-link" href="#">{{ page1 }}</a>
                     </li>
                     <li v-if="props.store.currentPage > 1" @click="handleSubmit(prevPage)"
@@ -32,9 +39,15 @@
                         :class="getPageItemClass(nextPage2)">
                         <a class="page-link" href="#">{{ nextPage2 }}</a>
                     </li>
-                    <li v-if="props.store.currentPage < props.store.allPagesCount - 1" @click="handleSubmit(props.store.allPagesCount)"
+                    <li v-if="props.store.currentPage < props.store.allPagesCount - 1"
+                        @click="handleSubmit(props.store.allPagesCount)"
                         :class="getPageItemClass(props.store.allPagesCount)">
                         <a class="page-link" href="#">{{ props.store.allPagesCount }}</a>
+                    </li>
+                    <li class="page-item">
+                        <a @click="arrowNextPage" class="page-link" href="#" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
                     </li>
                 </ul>
             </nav>
@@ -48,18 +61,20 @@ const selectedPlatform = ref('Default');
 import { ref } from 'vue';
 import Game from '../Game.vue';
 const props = defineProps([
-    'getGamePlatformesBy3', 
-    'toggleFavourite', 
-    'watchChangingPlatform', 
-    'isAuth', 
-    'getPageItemClass', 
-    'handleSubmit', 
-    'currentPage', 
-    'prevPage', 
-    'nextPage1', 
-    'nextPage2', 
+    'getGamePlatformesBy3',
+    'toggleFavourite',
+    'watchChangingPlatform',
+    'isAuth',
+    'getPageItemClass',
+    'handleSubmit',
+    'currentPage',
+    'prevPage',
+    'nextPage1',
+    'nextPage2',
     'page1',
-    'store'
+    'store',
+    'arrowNextPage',
+    'arrowPrevPage',
 ])
 
 </script>

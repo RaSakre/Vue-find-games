@@ -1,12 +1,27 @@
 <script setup>
-import Header from './components/Header.vue';
+import Header from './components/Header/Header.vue'
+
+import { useRouter } from 'vue-router';
+import { useUsersStore } from './store/usersStore';
+const usersStore = useUsersStore()
+const router = useRouter();
+
+router.beforeEach((to, from, next) => {
+  // console.log(usersStore.isAuthenticated)
+  if (to.meta.requiresAuth && !usersStore.isAuthenticated) {
+    next({
+      path: '/login',
+      query: { redirect: to.fullPath }
+    })
+  } else {
+    next()
+  }
+})
 </script>
 
 <template>
   <Header />
-  <router-view /> 
+  <router-view />
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

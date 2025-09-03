@@ -1,19 +1,10 @@
 <template>
     <div class="container">
-        <GamesListUI 
-            :page1="page1"
-            :prevPage="prevPage"
-            :nextPage1="nextPage1"
-            :nextPage2="nextPage2"
-            :currentPage="currentPage"
-            :handleSubmit="handleSubmit"
-            :getGamePlatformesBy3="getGamePlatformesBy3"
-            :toggleFavourite="toggleFavourite"
-            :getPageItemClass="getPageItemClass"
-            :isAuth="isAuth"
-            :watchChangingPlatform="watchChangingPlatform"
-            :store="store"
-        />
+        <GamesListUI :page1="page1" :prevPage="prevPage" :nextPage1="nextPage1" :nextPage2="nextPage2"
+            :currentPage="currentPage" :handleSubmit="handleSubmit" :getGamePlatformesBy3="getGamePlatformesBy3"
+            :toggleFavourite="toggleFavourite" :getPageItemClass="getPageItemClass" :isAuth="isAuth"
+            :watchChangingPlatform="watchChangingPlatform" :store="store" :arrowNextPage="arrowNextPage"
+            :arrowPrevPage="arrowPrevPage" />
     </div>
 </template>
 
@@ -32,7 +23,6 @@ const store = useGamesStore();
 const favoriteGamesStore = useFavoriteGamesStore();
 const usersStore = useUsersStore();
 const isAuth = usersStore.isAuthenticated
-
 const page1 = ref(1)
 const prevPage = computed(() => store.currentPage - 1);
 const currentPage = computed(() => store.currentPage);
@@ -40,12 +30,29 @@ const nextPage1 = computed(() => store.currentPage + 1);
 const nextPage2 = computed(() => store.currentPage + 2);
 const selectedPlatform = ref('Default');
 
+
+
 const toggleFavourite = (id) => {
     const game = store.games.find(game => game.id === id);
     favoriteGamesStore.toggleFavorite(game)
     console.log(favoriteGamesStore.favoriteGames)
 }
 
+const arrowNextPage = () => {
+    if (store.isNextNull) {
+        alert('Впереди только драконы')
+        return
+    }
+    store.getGameByPage(store.currentPage + 1)
+}
+
+const arrowPrevPage = () => {
+    if (store.isPreviousNull) {
+        alert('Сзади только драконы')
+        return
+    }
+    store.getGameByPage(store.currentPage - 1)
+}
 
 const watchChangingPlatform = () => {
     store.filterGamesByPlatform(selectedPlatform.value)
@@ -53,9 +60,13 @@ const watchChangingPlatform = () => {
 
 
 const getGamePlatformesBy3 = (platformes) => {
+    if (!platformes) {
+        return ''
+    }
     if (platformes.length > 3) {
         return platformes.slice(0, 3).map(platform => platform.platform.name).join(', ') + ` and ${platformes.length - 3} more`
-    } else {
+    }
+    else {
         return platformes.map(platform => platform.platform.name).join(', ')
     }
 }

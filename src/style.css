@@ -1,5 +1,22 @@
 @import url(./font/font.css);
 
+:root {
+
+}
+
 body {
     font-family: 'Lato', sans-serif;
 }
+
+body.light {
+    background-color: var(--bs-gray-200);
+    color: var(--bs-gray-900);
+    transition: all 0.3s ease-in-out;
+}
+
+body.dark {
+    background-color: var(--bs-gray-900);
+    color: var(--bs-gray-200);
+    transition: all 0.3s ease-in-out;
+}
+
