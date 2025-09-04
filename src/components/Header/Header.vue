@@ -31,7 +31,7 @@ const usersStore = useUsersStore()
 const handleSubmit = (input) => {
     store.query = input
     store.clear()
-    store.getGame(input)
+    store.getGame()
 }
 
 const moveToProfile = () => {

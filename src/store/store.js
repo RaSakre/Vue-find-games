@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { computed, ref } from "vue";
+import { buildApiUrl } from "./paramsHelper";
 
 export const useGamesStore = defineStore("games", () => {
     const games = ref([]);
@@ -7,6 +8,7 @@ export const useGamesStore = defineStore("games", () => {
     const error = ref("");
     const query = ref('');
     const platforms = ref([])
+    const platformId = ref(0)
     const isNextNull = ref(false)
     const isPreviousNull = ref(false)
     const currentPage = ref(1);
@@ -14,16 +16,39 @@ export const useGamesStore = defineStore("games", () => {
 
     const getGameByPage = (page) => {
         currentPage.value = page;
-        getGame(query.value);
+        getGame();
     };
 
-    const getGame = async (query) => {
+    const urlGames = computed(() => {
+        const params = {
+            search: query.value,
+            page: currentPage.value,
+        };
+
+        if (platformId.value && platformId.value !== 'Default') {
+            params.platforms = platformId.value;
+        }
+
+        return buildApiUrl('games', params);
+    });
+    const urlPlatforms = computed(() => {
+        const params = {
+            search: query.value,
+            // platforms: platformId.value,
+            page: currentPage.value,
+        };
+
+        if (platformId.value && platformId.value !== 'Default') {
+            params.platforms = platformId.value;
+        }
+        return buildApiUrl('games', params);
+    })
+
+    const getGame = async () => {
         isLoading.value = true;
         const itemsOnPage = 20;
         try {
-            const response = await fetch(
-                `https://api.rawg.io/api/games?key=785f5a66e21f48a59ed6501ba3d2c48a&search=${query}&page=${currentPage.value}`
-            );
+            const response = await fetch(urlGames.value);
             if (!response.ok) {
                 throw new Error("Error fetching data");
             }
@@ -49,9 +74,7 @@ export const useGamesStore = defineStore("games", () => {
     };
     const getPlatforms = async () => {
         try {
-            const response = await fetch(
-                `https://api.rawg.io/api/platforms?key=785f5a66e21f48a59ed6501ba3d2c48a`
-            );
+            const response = await fetch('https://api.rawg.io/api/platforms?key=785f5a66e21f48a59ed6501ba3d2c48a');
             if (!response.ok) {
                 throw new Error("Error fetching data");
             }
@@ -69,16 +92,19 @@ export const useGamesStore = defineStore("games", () => {
     };
 
 
-    const filterGamesByPlatform = (selectedPlatform) => {
-        if (selectedPlatform === 'Default' || !selectedPlatform) {
-            return games.value
+    const filterGamesByPlatform = async () => {
+        const itemsOnPage = 20
+        try {
+            const response = await fetch(urlPlatforms.value)
+            if (!response.ok) {
+                throw new Error("Error fetching data");
+            }
+            const data = await response.json();
+            games.value = data.results;
+            allPagesCount.value = Math.ceil(data.count / itemsOnPage);
+        } catch (err) {
+            error.value = err.message;
         }
-
-        return games.value.filter((game) => {
-            return game.platforms.some((platformObj) =>
-                platformObj.platform.name.toLowerCase() === selectedPlatform.toLowerCase()
-            );
-        });
     }
 
     return {
@@ -96,5 +122,6 @@ export const useGamesStore = defineStore("games", () => {
         filterGamesByPlatform,
         isNextNull,
         isPreviousNull,
+        platformId
     };
 });
