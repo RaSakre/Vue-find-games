@@ -8,7 +8,7 @@ const router = useRouter();
 
 router.beforeEach((to, from, next) => {
   // console.log(usersStore.isAuthenticated)
-  if (to.meta.requiresAuth && !usersStore.isAuthenticated) {
+  if (to.meta.requiresAuth && !localStorage.getItem('user')) {
     next({
       path: '/login',
       query: { redirect: to.fullPath }

@@ -5,10 +5,7 @@
                 <router-link to="/" class="header__logo">
                     <img :src="logo" alt="logo">
                 </router-link>
-                <form @submit.prevent="handleSubmit(input)" action="" class="header__form">
-                    <input v-model="input" type="text" placeholder="Type your game in English" class="header__input">
-                    <button type="submit" class="header__button button">Find</button>
-                </form>
+                <HeaderForm :handleSubmit="handleSubmit"/>
                 <div v-if="!usersStore.isAuthenticated" class="auth-buttons">
                     <router-link to="/login" class="button">Login</router-link>
                     <router-link to="/register" class="button">Join</router-link>
@@ -27,8 +24,7 @@
 </template>
 <script setup>
 import logo from '../../assets/logo.svg';
-import { ref } from 'vue';
-const input = ref('')
+import HeaderForm from './HeaderForm.vue';
 const props = defineProps([
     'handleSubmit',
     'usersStore',
@@ -37,7 +33,7 @@ const props = defineProps([
     'toggleTheme'
 ])
 </script>
-<style scoped>
+<style>
     .header {
     padding: 15px 0px;
 }
@@ -75,7 +71,6 @@ body.dark .header__input {
 
 .header__input:focus {
     outline: 2px solid black;
-
 }
 
 .button {
